@@ -2,7 +2,14 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Farbhelfer">
+<meta name="theme-color" content="#3b5bdb">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <title>Farbhelfer</title>
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -69,7 +76,7 @@ input[type=text],input[type=number],select{min-height:34px;border:1px solid var(
 .hexl{display:flex;align-items:center;gap:2px;flex:1;min-height:36px;padding:0 10px;border-radius:10px;background:var(--hover);color:var(--ink-2);font:13px ui-monospace,monospace}
 .hexl input{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--ink);outline:none;min-height:0;padding:0}
 .hsb{margin:0;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
-.sws{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.sws{display:grid;grid-template-columns:repeat(auto-fill,minmax(30px,46px));gap:6px}
 .sw{aspect-ratio:1;border:0;border-radius:8px;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);cursor:pointer;padding:0}
 
 /* harmony */
@@ -95,7 +102,19 @@ input[type=text],input[type=number],select{min-height:34px;border:1px solid var(
 .ps{position:relative;width:100%;height:100%;padding:0;border:0;border-radius:8px;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);cursor:pointer}
 .ps[aria-selected="true"]{box-shadow:inset 0 0 0 1px rgba(0,0,0,.14),0 0 0 2px var(--panel),0 0 0 4px var(--accent)}
 .ps .x{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:0;background:var(--ink);color:var(--panel);font:700 12px/18px system-ui;display:none;cursor:pointer;padding:0}
-.ps:hover .x{display:block}
+.ps:hover .x,.ps[aria-selected="true"] .x{display:block}
+@media (max-width:1040px){
+  html,body{height:auto}
+  body{overflow:auto;display:block}
+  main{grid-template-columns:minmax(0,1fr);padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+  .col{overflow:visible}
+  header{padding-top:calc(14px + env(safe-area-inset-top,0px));flex-wrap:wrap}
+}
+@media (max-width:520px){.hhead{flex-direction:column;align-items:center}.grid2{grid-template-columns:minmax(0,1fr)}.expbtns{grid-template-columns:minmax(0,1fr)}}
+#sheet{position:fixed;inset:0;z-index:60;background:rgba(10,10,16,.5);display:grid;place-items:center;padding:16px}
+#sheet .box{background:var(--panel);border-radius:18px;padding:20px;width:min(460px,100%);display:grid;gap:12px;box-shadow:var(--shadow)}
+#sheet h2{font-size:17px;letter-spacing:0;text-transform:none;color:var(--ink)}
+#sheetFiles{margin:0;padding-left:18px;font:13px ui-monospace,monospace;color:var(--ink-2)}
 .ps.drop{outline:2px dashed var(--accent);outline-offset:2px}
 .empty{grid-column:1/-1;color:var(--ink-2);font-size:13px;padding:12px}
 .exp{display:grid;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
@@ -185,13 +204,15 @@ input[type=text],input[type=number],select{min-height:34px;border:1px solid var(
     <div class="row">
       <button class="btn small" id="swAdd">+ Aktuelle Farbe</button>
       <button class="btn small" id="swRep" disabled>Auswahl ersetzen</button>
+      <button class="btn small" id="swL" disabled title="Ausgewählte Farbe nach vorne" aria-label="Nach vorne">◀</button>
+      <button class="btn small" id="swR" disabled title="Ausgewählte Farbe nach hinten" aria-label="Nach hinten">▶</button>
       <button class="btn small" id="swSort">Nach Helligkeit</button>
       <label class="tog"><input type="checkbox" id="grayTog"> Werte prüfen</label>
     </div>
     <div class="row" id="swNameRow" hidden>
       <input type="text" id="swName" maxlength="60" placeholder="Name der Farbe" aria-label="Name der ausgewählten Farbe" style="flex:1;min-width:0">
     </div>
-    <p class="note">Klick = Farbe wählen · Ziehen = umsortieren · × = entfernen · Entf-Taste löscht die Auswahl.</p>
+    <p class="note">Tippen = Farbe wählen · Ziehen oder ◀ ▶ = umsortieren · × = entfernen</p>
 
     <div class="exp">
       <h2>Export für Clip Studio</h2>
@@ -211,6 +232,18 @@ input[type=text],input[type=number],select{min-height:34px;border:1px solid var(
   </section>
 </main>
 <input type="file" id="acoIn" accept=".aco" hidden>
+<div id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetT">
+  <div class="box">
+    <h2 id="sheetT">Datei bereit</h2>
+    <ul id="sheetFiles"></ul>
+    <p class="note"><b>Teilen</b> → „In Dateien sichern“ legt die Datei in die Dateien-App. In Clip Studio dann importieren – oder die Datei in Split View direkt auf die Farbset-Palette ziehen.</p>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn" id="sheetDl">Herunterladen</button>
+      <button class="btn primary" id="sheetShare">Teilen …</button>
+      <button class="btn" id="sheetClose">Schließen</button>
+    </div>
+  </div>
+</div>
 <div id="toast" hidden><span id="toastT"></span><button id="toastB" hidden>Im Ordner zeigen</button></div>
 
 <script>
@@ -439,7 +472,7 @@ function renderPalette(){
     const x=document.createElement('button');x.className='x';x.textContent='×';x.title='Entfernen';x.setAttribute('aria-label','Farbe entfernen');b.append(x);g.append(b);
   });
   if(S.sel>=p.sw.length)S.sel=-1;
-  $('#swRep').disabled=S.sel<0;$('#swNameRow').hidden=S.sel<0;if(S.sel>=0&&document.activeElement!==$('#swName'))$('#swName').value=p.sw[S.sel].n;
+  $('#swRep').disabled=S.sel<0;$('#swL').disabled=S.sel<=0;$('#swR').disabled=S.sel<0||S.sel>=p.sw.length-1;$('#swNameRow').hidden=S.sel<0;if(S.sel>=0&&document.activeElement!==$('#swName'))$('#swName').value=p.sw[S.sel].n;
   $('#grayTog').checked=S.gray;$('#pngNames').checked=S.pngNames;$('#pngHex').checked=S.pngHex;
   sizePal();
 }
@@ -476,6 +509,8 @@ $('#palDel').addEventListener('click',e=>{
 });
 $('#swAdd').addEventListener('click',()=>{ensurePal();P().sw.push({c:S.color,n:''});S.sel=P().sw.length-1;renderPalette();save()});
 $('#swRep').addEventListener('click',()=>{if(S.sel<0)return;P().sw[S.sel].c=S.color;renderPalette();save();toast('Ersetzt')});
+function moveSel(d){const sw=P().sw,i=S.sel,j=i+d;if(i<0||j<0||j>=sw.length)return;[sw[i],sw[j]]=[sw[j],sw[i]];S.sel=j;renderPalette();save()}
+$('#swL').addEventListener('click',()=>moveSel(-1));$('#swR').addEventListener('click',()=>moveSel(1));
 $('#swSort').addEventListener('click',()=>{P().sw.sort((a,b)=>lstar(a.c)-lstar(b.c));S.sel=-1;renderPalette();save();toast('Nach Helligkeit sortiert (dunkel → hell)')});
 $('#swName').addEventListener('input',e=>{if(S.sel>=0){P().sw[S.sel].n=e.target.value.slice(0,60);save()}});
 $('#swName').addEventListener('change',renderPalette);
@@ -556,10 +591,23 @@ async function saveOne(name,data,filterName,ext){
   if(window.native){
     const path=await window.native.saveFile({name,data,filters:[{name:filterName,extensions:[ext]}]});
     if(path)toast('Gespeichert: '+path.split('/').pop(),path);
-  }else{
-    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),20000);
-  }
+  }else offerFiles([{name,data}]);
 }
+// Web/iPad: show a sheet so "Teilen" runs on its own tap (Safari only allows the share sheet right after a tap)
+const MIME={aco:'application/octet-stream',grd:'application/octet-stream',png:'image/png'};
+let pendingFiles=[];
+const asFiles=fs=>fs.map(f=>new File([f.data],f.name,{type:MIME[f.name.split('.').pop()]||'application/octet-stream'}));
+function canShare(fs){try{return !!(navigator.canShare&&navigator.canShare({files:asFiles(fs)}))}catch(_){return false}}
+function offerFiles(fs){
+  pendingFiles=fs;const ul=$('#sheetFiles');ul.textContent='';
+  fs.forEach(f=>{const li=document.createElement('li');li.textContent=f.name+' · '+Math.max(1,Math.round(f.data.byteLength/1024))+' KB';ul.append(li)});
+  $('#sheetT').textContent=fs.length>1?fs.length+' Dateien bereit':'Datei bereit';
+  $('#sheetShare').hidden=!canShare(fs);$('#sheet').hidden=false;
+}
+function downloadAll(fs){fs.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([f.data],{type:MIME[f.name.split('.').pop()]}));a.download=f.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),30000)},i*400))}
+$('#sheetShare').addEventListener('click',()=>{navigator.share({files:asFiles(pendingFiles)}).then(()=>{$('#sheet').hidden=true;toast('Geteilt')}).catch(e=>{if(e&&e.name!=='AbortError')toast('Teilen ging nicht – nimm „Herunterladen“')})});
+$('#sheetDl').addEventListener('click',()=>{downloadAll(pendingFiles);$('#sheet').hidden=true;toast('Gespeichert in Downloads')});
+$('#sheetClose').addEventListener('click',()=>$('#sheet').hidden=true);
 function needColors(){if(!P()||!P().sw.length){toast('Die Palette ist leer');return false}return true}
 $('#expAco').addEventListener('click',()=>{if(needColors())saveOne(safe(P().name)+'.aco',acoBytes(P().sw),'Farbset (Photoshop-Farbfelder)','aco')});
 $('#expPng').addEventListener('click',async()=>{if(needColors())saveOne(safe(P().name)+'.png',await chartPng(P()),'PNG-Bild','png')});
@@ -573,7 +621,7 @@ $('#expAll').addEventListener('click',async()=>{
   const files=[{name:b+'.aco',data:acoBytes(p.sw)},{name:b+'.png',data:await chartPng(p)}];
   if(gr.length)files.push({name:b+'.grd',data:grdBytes(gr)});
   if(window.native){const dir=await window.native.saveMany({files});if(dir)toast(files.length+' Dateien gespeichert',dir)}
-  else for(const f of files)await saveOne(f.name,f.data);
+  else offerFiles(files);
 });
 $('#impAco').addEventListener('click',()=>$('#acoIn').click());
 $('#acoIn').addEventListener('change',async e=>{
@@ -588,6 +636,7 @@ load();
 if(!S.pal.length)S.pal=[{name:'Meine Palette',cols:5,sw:[]}];
 S.hsv=hex2hsv(S.color,22);
 setTab(S.tab);renderPicker();renderHarmony();renderSkin();renderPalette();
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 window.__farbhelfer={acoBytes,parseAco,grdBytes,gradientsOf,chartPng,S};
 })();
 </script>
