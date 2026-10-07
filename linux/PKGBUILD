@@ -1,6 +1,6 @@
 # Lokales Paket. Bauen:  cd ~/Documents/Farbhelfer/linux && makepkg -f
 pkgname=farbhelfer
-pkgver=1.1.0
+pkgver=1.2.0
 pkgrel=1
 pkgdesc="Farbhelfer – Farbharmonien, Schattierung und Paletten für Clip Studio Paint"
 arch=('any')

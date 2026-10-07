@@ -97,6 +97,48 @@ input[type=text],input[type=number],select{min-height:34px;border:1px solid var(
 .tip b{margin-right:4px}
 
 /* palette */
+
+.tabs{display:flex;flex-wrap:wrap}
+.pane{display:flex;flex-direction:column;gap:12px}
+.pane>*{flex-shrink:0}
+details.expl{border-radius:12px;background:var(--sel);padding:10px 14px;font-size:13px}
+details.expl summary{cursor:pointer;font-weight:700;color:var(--ink)}
+details.expl p{margin:8px 0 0}
+.lsgrid{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+#sphere{width:230px;height:210px;border-radius:12px;flex:none;box-shadow:inset 0 0 0 1px var(--line)}
+.lights{display:grid;gap:10px;flex:1;min-width:220px}
+.light{display:grid;gap:6px;padding:10px;border-radius:10px;background:var(--hover)}
+.lh2{display:flex;align-items:center;gap:6px}
+.lh2 .note{flex:1}
+.lsw{width:30px;height:30px;border:0;border-radius:8px;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.2),0 0 0 2px var(--panel),0 0 0 3px var(--line);cursor:pointer;flex:none;margin-left:auto;padding:0}
+.obj{display:inline-flex;align-items:center;gap:6px;padding:4px 6px 4px 4px;border-radius:999px;background:var(--hover);border:0;cursor:pointer;font-size:12.5px}
+.obj i{width:22px;height:22px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+.obj[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--accent)}
+.obj b{font-weight:700;color:var(--ink-2);padding:0 4px}
+.gmrow{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+#gamut{width:280px;height:280px;flex:none;touch-action:none;cursor:grab}
+#refC{width:100%;max-height:300px;object-fit:contain;border-radius:12px;background:var(--hover)}
+.refsw{display:grid;gap:6px}
+.refsw .rr{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;border:0;background:transparent;padding:0;cursor:pointer;text-align:left}
+.refsw .rr i{height:34px;border-radius:8px;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.refsw .bar{height:8px;border-radius:4px;background:var(--hover);overflow:hidden}
+.refsw .bar span{display:block;height:100%;background:var(--c)}
+.refsw small{font:12px ui-monospace,monospace;color:var(--ink-2);min-width:96px;text-align:right}
+.tool{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:12px;border:1px solid var(--line)}
+.hrow{display:flex;gap:6px}
+.hrow .cell{flex:1}
+.hrow .lab{font-size:10.5px;color:var(--ink-2);text-align:center}
+.npb{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.npb .k{font-size:12px;font-weight:700}
+.npb .k span{display:block;font-weight:500;color:var(--ink-2);font-size:11px}
+.npb .v{display:flex;flex-wrap:wrap;gap:4px}
+.npb .v i{width:24px;height:24px;border-radius:6px;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.warn{font-size:12.5px;color:var(--danger);margin:4px 0 0}
+.ok{font-size:12.5px;color:var(--ink-2);margin:4px 0 0}
+.sc{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.sc div{aspect-ratio:1;border-radius:10px;background:var(--bgc);display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 1px var(--line)}
+.sc div i{width:36%;aspect-ratio:1;background:var(--c);display:block}
+.sc div span{position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--tc)}
 #palGrid{display:grid;gap:6px;padding:6px;border-radius:12px;background:var(--hover);min-height:60px;align-content:start}
 #palGrid.gray{filter:grayscale(1)}
 .ps{position:relative;width:100%;height:100%;padding:0;border:0;border-radius:8px;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);cursor:pointer}
@@ -151,6 +193,10 @@ input[type=text],input[type=number],select{min-height:34px;border:1px solid var(
     <div class="tabs" role="tablist">
       <button role="tab" id="tabH" aria-selected="true">Harmonie</button>
       <button role="tab" id="tabS" aria-selected="false">Hauttöne</button>
+      <button role="tab" id="tabL" aria-selected="false">Licht</button>
+      <button role="tab" id="tabG" aria-selected="false">Gamut</button>
+      <button role="tab" id="tabR" aria-selected="false">Referenz</button>
+      <button role="tab" id="tabT" aria-selected="false">Werkzeuge</button>
     </div>
 
     <div id="paneH" class="col" style="padding:0;border:0;background:none;overflow:visible">
@@ -184,6 +230,111 @@ input[type=text],input[type=number],select{min-height:34px;border:1px solid var(
         <button class="btn primary" id="skinNew">Alle als neue Palette</button>
         <button class="btn" id="skinCur">Aktuelle Farbe als Hautton hinzufügen</button>
       </div>
+    </div>
+
+    <!-- ---------- Licht-Szene ---------- -->
+    <div id="paneL" class="pane" hidden>
+      <details class="expl" open><summary>So funktioniert die Licht-Szene</summary>
+        <p>Eine Oberfläche bekommt Licht aus <b>mehreren Quellen</b>: Das <b>Hauptlicht</b> (Sonne, Lampe) macht die Lichtseite. In den Schatten scheint es nicht – dort sieht man nur das <b>Umgebungslicht</b> (z. B. der blaue Himmel) und das <b>Reflexlicht</b>, das vom Boden oder von Wänden zurückgeworfen wird. Deshalb sind Schatten draußen bläulich und auf Gras grünlich.</p>
+        <p>Der Rechner mischt diese Lichter mit der <b>Eigenfarbe</b> deines Objekts (wie echtes Licht: Farbe × Licht) und zeigt die typischen Zonen eines Körpers. Alle Objekte einer Szene teilen sich dieselben Lichter – so passen sie automatisch zusammen.</p>
+        <p class="note"><b>Material:</b> „Haut“ lässt Licht ein Stück eindringen (Subsurface Scattering) – dadurch werden Schatten warm und rötlich statt grau. „Metall“ färbt Glanzlichter in der eigenen Farbe, „Glänzend“ in der Lichtfarbe.</p>
+        <p class="note"><b>Zonen:</b> Glanzlicht · Licht · Halbton · <b>Kernschatten</b> (dunkelste Stelle am Übergang) · <b>Reflexlicht</b> (aufgehellter Schattenrand) · <b>Schlagschatten</b> (Schatten, den das Objekt wirft) · <b>Kontaktschatten</b> (ganz dunkel, wo Dinge sich berühren).</p>
+      </details>
+      <div class="chips" id="lsPresets"></div>
+      <div class="lsgrid">
+        <canvas id="sphere" width="230" height="210" aria-label="Beleuchtete Kugel als Vorschau"></canvas>
+        <div class="lights">
+          <div class="light">
+            <div class="lh2"><b>Hauptlicht</b><button class="lsw" id="lsKeySw" title="Aktuelle Farbe als Lichtfarbe übernehmen"></button></div>
+            <label class="field" for="lsK"><span class="lbl">Farbtemperatur <span id="lsKV"></span></span><input type="range" id="lsK" min="1500" max="10000" step="100"></label>
+            <label class="field" for="lsKI"><span class="lbl">Stärke <span id="lsKIV"></span></span><input type="range" id="lsKI" min="0" max="200" step="5"></label>
+          </div>
+          <div class="light">
+            <div class="lh2"><b>Umgebungslicht</b> <span class="note">Himmel/Raum</span><button class="lsw" id="lsAmbSw" title="Aktuelle Farbe übernehmen"></button></div>
+            <label class="field" for="lsAI"><span class="lbl">Stärke <span id="lsAIV"></span></span><input type="range" id="lsAI" min="0" max="150" step="5"></label>
+          </div>
+          <div class="light">
+            <div class="lh2"><b>Reflexlicht</b> <span class="note">Boden/Wand</span><button class="lsw" id="lsBncSw" title="Aktuelle Farbe übernehmen"></button></div>
+            <label class="field" for="lsBI"><span class="lbl">Stärke <span id="lsBIV"></span></span><input type="range" id="lsBI" min="0" max="150" step="5"></label>
+          </div>
+          <div class="field"><span class="lbl">Material</span><div class="chips" id="lsMat"><button data-v="haut" title="Licht scheint in die Haut und färbt Schatten warm-rötlich">Haut</button><button data-v="matt">Matt</button><button data-v="glanz">Glänzend</button><button data-v="metall">Metall</button></div></div>
+        </div>
+      </div>
+      <p class="note">Tipp: Wähle links eine Farbe und tippe auf das Farbfeld neben einem Licht, um sie als Lichtfarbe zu übernehmen. Der Temperatur-Regler setzt die Hauptlicht-Farbe wieder auf „echtes“ Licht.</p>
+      <h3>Objekte in der Szene</h3>
+      <div class="row" id="lsObjs"></div>
+      <div class="mx" id="lsMx"></div>
+      <div class="row">
+        <button class="btn primary" id="lsNew">Szene als neue Palette</button>
+        <button class="btn" id="lsAdd">Zur Palette hinzufügen</button>
+        <button class="btn" id="lsObjAdd">+ Aktuelle Farbe als Objekt</button>
+      </div>
+    </div>
+
+    <!-- ---------- Gamut-Maske ---------- -->
+    <div id="paneG" class="pane" hidden>
+      <details class="expl" open><summary>So funktioniert die Gamut-Maske</summary>
+        <p>Eine Methode des Illustrators <b>James Gurney</b>: Du legst eine Form auf den Farbkreis und benutzt <b>nur die Farben darin</b>. Weil alle Farben aus demselben begrenzten Bereich stammen, wirkt das Bild automatisch stimmig – ähnlich wie bei einem echten Maler, der nur wenige Tuben auf der Palette hat.</p>
+        <p class="note">Zieh die Ecken der Form. Je näher eine Ecke am Rand, desto kräftiger die Farbe; in der Mitte wird es grau. <b>Dreieck</b> = drei Hauptrichtungen mit gedeckten Mischungen dazwischen. Eine <b>schmale, lange Form</b> durch die Mitte ergibt zwei Gegenfarben mit vielen Graustufen – sehr filmisch.</p>
+      </details>
+      <div class="gmrow">
+        <canvas id="gamut" width="280" height="280" aria-label="Farbkreis mit Maske – Ecken verschiebbar"></canvas>
+        <div class="opts">
+          <div class="field"><span class="lbl">Form</span><div class="chips" id="gmShape"><button data-v="3">Dreieck</button><button data-v="4">Viereck</button><button data-v="5">Fünfeck</button></div></div>
+          <div class="row"><button class="btn small" id="gmRotL" title="Maske drehen">⟲ Drehen</button><button class="btn small" id="gmRotR" title="Maske drehen">Drehen ⟳</button><button class="btn small" id="gmSmall">Kleiner</button><button class="btn small" id="gmBig">Größer</button></div>
+          <label class="field" for="gmV"><span class="lbl">Helligkeit der Vorschau <span id="gmVV"></span></span><input type="range" id="gmV" min="20" max="100" step="5"></label>
+          <label class="tog"><input type="checkbox" id="gmRamps"> mit Lichtstufen (wie im Harmonie-Reiter)</label>
+          <p class="note" id="gmInfo"></p>
+        </div>
+      </div>
+      <div class="sws" id="gmSw"></div>
+      <div class="row"><button class="btn primary" id="gmNew">Maske als neue Palette</button><button class="btn" id="gmAdd">Zur Palette hinzufügen</button></div>
+    </div>
+
+    <!-- ---------- Referenzbild ---------- -->
+    <div id="paneR" class="pane" hidden>
+      <details class="expl" open><summary>So funktioniert die Referenz-Analyse</summary>
+        <p>Lade ein Foto, Filmstill oder Bild, dessen Stimmung du magst. Der Farbhelfer fasst ähnliche Farben zusammen und zeigt die <b>wichtigsten Farben</b> mit ihrem Anteil. So übernimmst du eine Stimmung, ohne zu raten.</p>
+        <p class="note"><b>Graustufen</b> und <b>Notan</b> zeigen, wie das Bild nur mit Hell und Dunkel funktioniert. Notan (japanisch „hell-dunkel“) teilt das Bild in 3 oder 5 Helligkeitsgruppen – gute Bilder haben dabei große, klare Formen.</p>
+      </details>
+      <div class="row">
+        <button class="btn primary" id="refLoad">Bild laden …</button>
+        <div class="chips" id="refView"><button data-v="color">Farbe</button><button data-v="gray">Graustufen</button><button data-v="n3">Notan 3</button><button data-v="n5">Notan 5</button></div>
+      </div>
+      <canvas id="refC" width="10" height="10" hidden aria-label="Referenzbild"></canvas>
+      <p class="note" id="refInfo">Noch kein Bild geladen. Das Bild bleibt auf deinem Gerät, es wird nirgends hochgeladen.</p>
+      <label class="field" for="refK"><span class="lbl">Anzahl Farben <span id="refKV"></span></span><input type="range" id="refK" min="3" max="16" step="1"></label>
+      <div id="refSw" class="refsw"></div>
+      <div class="row"><button class="btn primary" id="refNew" disabled>Als neue Palette</button><button class="btn" id="refAdd" disabled>Zur Palette hinzufügen</button><label class="tog"><input type="checkbox" id="refSortL"> nach Helligkeit sortieren</label></div>
+    </div>
+
+    <!-- ---------- Werkzeuge ---------- -->
+    <div id="paneT" class="pane" hidden>
+      <section class="tool">
+        <h3>Luftperspektive</h3>
+        <details class="expl"><summary>Erklärung</summary>
+          <p>Zwischen dir und fernen Dingen liegt Luft mit Dunst. Je weiter weg etwas ist, desto mehr nimmt es die <b>Farbe des Himmels/Dunstes</b> an: Kontraste werden schwächer, Dunkles wird heller, Farben werden blasser. Das ist der wichtigste Trick, damit Hintergründe Tiefe bekommen.</p>
+        </details>
+        <div class="row"><span class="note">Dunst:</span><div class="chips" id="hzPre"></div><button class="lsw" id="hzSw" title="Aktuelle Farbe als Dunstfarbe übernehmen"></button></div>
+        <label class="field" for="hzA"><span class="lbl">Dichte <span id="hzAV"></span></span><input type="range" id="hzA" min="10" max="100" step="5"></label>
+        <div class="hrow" id="hzRow"></div>
+        <div class="row"><button class="btn" id="hzAdd">Reihe zur Palette hinzufügen</button><span class="note">Basis = aktuelle Farbe (links)</span></div>
+      </section>
+      <section class="tool">
+        <h3>Werteplan der Palette</h3>
+        <details class="expl"><summary>Erklärung</summary>
+          <p>Ein Bild „liest“ sich zuerst über Hell und Dunkel, erst dann über Farbe. Plane deine Farben in <b>wenigen klaren Helligkeitsgruppen</b>. Farben, die fast gleich hell sind, verschwimmen nebeneinander – auch wenn sie farbig sehr verschieden sind.</p>
+        </details>
+        <div class="row"><span class="note">Gruppen:</span><div class="chips" id="npN"><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></div></div>
+        <div id="npOut"></div>
+      </section>
+      <section class="tool">
+        <h3>Simultankontrast</h3>
+        <details class="expl"><summary>Erklärung</summary>
+          <p>Eine Farbe wirkt je nach Umgebung anders: Auf Dunkel wirkt sie heller, auf Hell dunkler; neben ihrer Gegenfarbe kräftiger, neben ähnlichen Farben blasser. <b>Alle kleinen Quadrate unten haben exakt dieselbe Farbe.</b> Deshalb immer im Zusammenhang des Bildes beurteilen – nicht isoliert auf weißem Grund.</p>
+        </details>
+        <div class="sc" id="scOut"></div>
+      </section>
     </div>
   </section>
 
@@ -232,6 +383,7 @@ input[type=text],input[type=number],select{min-height:34px;border:1px solid var(
   </section>
 </main>
 <input type="file" id="acoIn" accept=".aco" hidden>
+<input type="file" id="refIn" accept="image/*" hidden>
 <div id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetT">
   <div class="box">
     <h2 id="sheetT">Datei bereit</h2>
@@ -277,7 +429,7 @@ const toWheel=h=>S.wheel==='ryb'?mapHue(h,1,0):h, fromWheel=h=>S.wheel==='ryb'?m
 function towardHue(h,t,amt){const d=((t-h+540)%360)-180;return (h+Math.sign(d)*Math.min(Math.abs(d),amt)+360)%360}
 
 /* ================= state ================= */
-const S={color:'#d99a73',old:'#d99a73',base:'#d99a73',hsv:{h:22,s:.47,v:.85},scheme:'split',wheel:'ryb',light:'warm',steps:5,shift:1,mute:0,range:1,tab:'harm',
+const S={color:'#d99a73',old:'#d99a73',base:'#d99a73',hsv:{h:22,s:.47,v:.85},scheme:'split',wheel:'ryb',light:'warm',steps:5,shift:1,mute:0,range:1,tab:'harm',ls:{preset:'noon',K:5500,keyC:'#ffe4ce',keyI:1,ambC:'#7fa8ff',ambI:.35,bncC:'#c8b89a',bncI:.25,mat:'matt',objs:[],sel:0},gm:{pts:[[0,-.8],[.7,.42],[-.7,.42]],v:.85,ramps:false},ref:{view:'color',k:8,sortL:false},tl:{haze:'#b9d3f0',hazeA:.6,np:3},
   pal:[],pi:0,sel:-1,gray:false,pngNames:true,pngHex:true};
 const SCHEMES={
   mono:{n:'Ton-in-Ton',o:[[0,'Basis']],tip:'Nur eine Farbe in vielen Helligkeiten. Sehr ruhig und edel – Spannung entsteht nur über Hell und Dunkel.'},
@@ -295,7 +447,7 @@ const QUICK=['#16151a','#ffffff','#d7263d','#f46036','#f9c22e','#2e9e6b','#1b98e
 
 /* ================= persistence ================= */
 const KEY='farbhelfer.v1';
-function save(){try{localStorage.setItem(KEY,JSON.stringify({color:S.color,scheme:S.scheme,wheel:S.wheel,light:S.light,steps:S.steps,shift:S.shift,mute:S.mute,range:S.range,tab:S.tab,pal:S.pal,pi:S.pi,pngNames:S.pngNames,pngHex:S.pngHex}))}catch(_){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({color:S.color,scheme:S.scheme,wheel:S.wheel,light:S.light,steps:S.steps,shift:S.shift,mute:S.mute,range:S.range,tab:S.tab,pal:S.pal,pi:S.pi,pngNames:S.pngNames,pngHex:S.pngHex,ls:S.ls,gm:S.gm,ref:S.ref,tl:S.tl}))}catch(_){}}
 function load(){
   try{
     const j=JSON.parse(localStorage.getItem(KEY)||'null');if(!j)return;
@@ -305,7 +457,14 @@ function load(){
     if(j.wheel==='rgb')S.wheel='rgb';if(j.light==='cool')S.light='cool';
     if([3,5,7].includes(j.steps))S.steps=j.steps;
     for(const k of ['shift','mute','range'])if(typeof j[k]==='number')S[k]=j[k];
-    if(j.tab==='skin')S.tab='skin';
+    if(typeof j.tab==='string')S.tab=j.tab;
+    const num=(v,a,b,d)=>typeof v==='number'&&isFinite(v)?clamp(v,a,b):d;
+    if(j.ls&&typeof j.ls==='object'){const L=j.ls,D=S.ls;D.preset=typeof L.preset==='string'?L.preset:'';D.K=L.K==null?null:num(L.K,1500,10000,5500);
+      for(const k of ['keyC','ambC','bncC'])if(hx(L[k]))D[k]=L[k];for(const k of ['keyI','ambI','bncI'])D[k]=num(L[k],0,2,D[k]);
+      if(['haut','matt','glanz','metall'].includes(L.mat))D.mat=L.mat;if(Array.isArray(L.objs))D.objs=L.objs.filter(hx).slice(0,10);D.sel=L.sel|0}
+    if(j.gm&&Array.isArray(j.gm.pts)&&j.gm.pts.length>=3&&j.gm.pts.length<=5&&j.gm.pts.every(q=>Array.isArray(q)&&q.length===2&&q.every(v=>typeof v==='number'&&isFinite(v)))){S.gm.pts=j.gm.pts.map(q=>[clamp(q[0],-1,1),clamp(q[1],-1,1)]);S.gm.v=num(j.gm.v,.2,1,.85);S.gm.ramps=!!j.gm.ramps}
+    if(j.ref){if(['color','gray','n3','n5'].includes(j.ref.view))S.ref.view=j.ref.view;S.ref.k=num(j.ref.k,3,16,8)|0;S.ref.sortL=!!j.ref.sortL}
+    if(j.tl){if(hx(j.tl.haze))S.tl.haze=j.tl.haze;S.tl.hazeA=num(j.tl.hazeA,.1,1,.6);if([3,4,5].includes(j.tl.np))S.tl.np=j.tl.np}
     if(Array.isArray(j.pal))S.pal=j.pal.filter(p=>p&&Array.isArray(p.sw)).map(p=>({name:String(p.name||'Palette').slice(0,40),cols:clamp(p.cols|0||5,1,16),sw:p.sw.filter(x=>x&&hx(x.c)).map(x=>({c:x.c.toLowerCase(),n:String(x.n||'').slice(0,60)}))}));
     S.pi=j.pi|0;S.pngNames=j.pngNames!==false;S.pngHex=j.pngHex!==false;
   }catch(_){}
@@ -326,6 +485,7 @@ function setColor(c,mode){
   if(mode!=='picker')S.hsv=hex2hsv(S.color,S.hsv.h);
   if(mode!=='keepbase')S.base=S.color;
   renderPicker();renderHarmony();renderSkin();markPalette();save();
+  if(S.tab==='tools')renderTools();else if(S.tab==='gamut')drawGamut();
 }
 function paintCmp(el,c,lbl){const L=lstar(c);el.style.setProperty('--c',c);el.style.setProperty('--tc',L>58?'#1d1b22':'#ffffff');lbl.textContent=c.toUpperCase()+' · Helligkeit '+Math.round(L)}
 function drawSV(){
@@ -453,8 +613,329 @@ $('#skinNew').addEventListener('click',()=>{
   S.pal.push({name:'Hauttöne',cols:8,sw});S.pi=S.pal.length-1;renderPalette();save();toast('Neue Palette „Hauttöne“');
 });
 $('#skinCur').addEventListener('click',()=>{customSkins.push(['Eigener '+(customSkins.length+1),S.color]);renderSkin();toast('Aktuelle Farbe als Hautton-Reihe ergänzt')});
-function setTab(t){S.tab=t;$('#tabH').setAttribute('aria-selected',String(t==='harm'));$('#tabS').setAttribute('aria-selected',String(t==='skin'));$('#paneH').hidden=t!=='harm';$('#paneS').hidden=t!=='skin';save()}
-$('#tabH').onclick=()=>setTab('harm');$('#tabS').onclick=()=>setTab('skin');
+/* ================= shared helpers for the new tools ================= */
+const lin1=c=>{c/=255;return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)};
+const linOf=hex=>hex2rgb(hex).map(lin1);
+const gam=v=>{v=Math.max(0,v);if(v>.8)v=.8+.2*(1-Math.exp(-(v-.8)/.2));return 255*(v<=.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-.055)};
+const hexOfLin=a=>rgb2hex(gam(a[0]),gam(a[1]),gam(a[2]));
+function pushRows(rows,asNew,name,cols){
+  if(asNew||!S.pal.length){S.pal.push({name:String(name).slice(0,40),cols:clamp(cols|0||5,1,16),sw:[]});S.pi=S.pal.length-1}
+  const p=P();rows.forEach(r=>p.sw.push(...r));S.sel=-1;renderPalette();save();
+  toast(asNew?'Neue Palette „'+p.name+'“':rows.length+(rows.length===1?' Reihe':' Reihen')+' hinzugefügt');
+}
+function cellBtn(c,title,extra){const b=document.createElement('button');b.className='cell'+(extra?' '+extra:'');b.style.setProperty('--c',c);b.title=title+' · '+c.toUpperCase();b.setAttribute('aria-pressed',String(c===S.color));b.onclick=()=>{S.old=S.color;setColor(c,'keepbase')};return b}
+function kelvin(K){
+  const t=K/100;let r,g,b;
+  if(t<=66){r=255;g=99.4708025861*Math.log(t)-161.1195681661;b=t<=19?0:138.5177312231*Math.log(t-10)-305.0447927307}
+  else{r=329.698727446*Math.pow(t-60,-.1332047592);g=288.1221695283*Math.pow(t-60,-.0755148492);b=255}
+  return rgb2hex(r,g,b);
+}
+
+/* ================= light scene ================= */
+const LSP={
+  noon:{n:'Mittagssonne',K:5500,kI:1,amb:'#7fa8ff',aI:.35,bnc:'#c8b89a',bI:.25},
+  golden:{n:'Goldene Stunde',K:3000,kI:1,amb:'#6f74c9',aI:.45,bnc:'#d9925a',bI:.3},
+  overcast:{n:'Bewölkt',K:6800,kI:.55,amb:'#b9c4d6',aI:.75,bnc:'#9a9a8a',bI:.2},
+  indoor:{n:'Zimmerlampe',K:2700,kI:.9,amb:'#8a7f74',aI:.35,bnc:'#b08a68',bI:.3},
+  candle:{n:'Kerzenschein',K:1900,kI:1,amb:'#3a2a2a',aI:.15,bnc:'#6b3a20',bI:.3},
+  moon:{n:'Mondnacht',key:'#9db8ff',kI:.55,amb:'#1d2a5a',aI:.45,bnc:'#20304a',bI:.12},
+  neon:{n:'Neon-Stadt',key:'#ff3fb4',kI:1,amb:'#1fd6ff',aI:.5,bnc:'#5a2a8a',bI:.3},
+  forest:{n:'Wald',K:5200,kI:.8,amb:'#8fbf8a',aI:.45,bnc:'#4f7a3a',bI:.4},
+  water:{n:'Unterwasser',key:'#9fe7ff',kI:.7,amb:'#1f6f8a',aI:.6,bnc:'#2f8f7a',bI:.3}
+};
+const MAT={haut:{kd:1,ks:.12,tint:'light',sh:22,sss:.35},matt:{kd:1,ks:.04,tint:'light',sh:8},glanz:{kd:1,ks:.55,tint:'light',sh:60},metall:{kd:.25,ks:.9,tint:'albedo',sh:28}};
+const ZONES=[['Kontakt','Kontaktschatten'],['Schlag','Schlagschatten'],['Kern','Kernschatten'],['Reflex','Reflexlicht'],['Halbton','Halbton'],['Licht','Licht'],['Glanz','Glanzlicht']];
+function applyPreset(k){
+  const p=LSP[k];if(!p)return;const L=S.ls;
+  L.preset=k;L.K=p.K||null;L.keyC=p.K?kelvin(p.K):p.key;L.keyI=p.kI;L.ambC=p.amb;L.ambI=p.aI;L.bncC=p.bnc;L.bncI=p.bI;
+}
+function lights(){
+  const L=S.ls,Kl=linOf(L.keyC).map(v=>v*L.keyI),Am=linOf(L.ambC).map(v=>v*L.ambI),B=linOf(L.bncC).map(v=>v*L.bncI);
+  const e=.9/Math.max(.05,...[0,1,2].map(i=>Kl[i]*.92+Am[i]*1.2));
+  return {Kl,Am,B,e,M:MAT[L.mat]||MAT.matt};
+}
+// d = how much the main light hits (0..1), sw = how much sky it sees, bw = how much it faces the ground
+function shadeLin(A,Lt,d,sw,bw,spec,scale=1){
+  const {Kl,Am,B,e,M}=Lt;
+  return [0,1,2].map(i=>(A[i]*(Kl[i]*d*M.kd+Am[i]*(.9+1.3*sw)+B[i]*bw)+(M.sss?A[i]*A[i]*Kl[i]*M.sss*(1-d)*(.4+.6*Math.max(sw,bw)):0)+spec*M.ks*(M.tint==='light'?Kl[i]:A[i]*Kl[i]))*e*scale);
+}
+function zonesOf(hex,Lt=lights()){
+  const A=linOf(hex);
+  return [shadeLin(A,Lt,0,.1,0,0,.45),shadeLin(A,Lt,0,.45,0,0,.8),shadeLin(A,Lt,0,.35,.05,0),shadeLin(A,Lt,0,.25,.9,0),
+          shadeLin(A,Lt,.45,.6,0,0),shadeLin(A,Lt,.92,.75,0,0),shadeLin(A,Lt,1,.8,0,1)].map(hexOfLin);
+}
+function drawSphere(){
+  const c=$('#sphere'),pd=Math.min(devicePixelRatio||1,2),W=230,H=210;c.width=W*pd;c.height=H*pd;
+  const x=c.getContext('2d'),img=x.createImageData(c.width,c.height),D=img.data,Lt=lights();
+  const obj=S.ls.objs[S.ls.sel]||S.color,A=linOf(obj),G=linOf(S.ls.bncC);
+  const sky=linOf(mixHex(S.ls.ambC,'#ffffff',.25)).map(v=>v*Math.min(1,.4+S.ls.ambI));
+  const cx=115*pd,cy=86*pd,r=64*pd,gy=148*pd,L=[-.55,-.62,.56],ln=Math.hypot(...L);L.forEach((v,i)=>L[i]=v/ln);
+  const Hh=[L[0],L[1],L[2]+1],hn=Math.hypot(...Hh);Hh.forEach((v,i)=>Hh[i]=v/hn);
+  const lit=shadeLin(G,Lt,.75,.8,0,0),shd=shadeLin(G,Lt,0,.5,0,0,.85),cont=shadeLin(G,Lt,0,.15,0,0,.5);
+  const sx=cx+40*pd,sy=gy+14*pd,srx=70*pd,sry=13*pd;
+  for(let py=0;py<c.height;py++)for(let px=0;px<c.width;px++){
+    let col;
+    if(py<gy)col=sky.map(v=>v*.9);
+    else{
+      const q=((px-sx)/srx)**2+((py-sy)/sry)**2,qc=((px-(cx+6*pd))/(26*pd))**2+((py-(gy+5*pd))/(5*pd))**2;
+      const t=clamp((1.15-q)/.3,0,1),tc=clamp((1.1-qc)/.4,0,1);
+      col=[0,1,2].map(i=>(lit[i]+(shd[i]-lit[i])*t)*(1-tc)+cont[i]*tc);
+    }
+    const dx=(px-cx)/r,dy=(py-cy)/r,dist=Math.hypot(dx,dy);
+    if(dist<1+1/r){
+      const a=clamp((1-dist)*r+.5,0,1),nz=Math.sqrt(Math.max(0,1-Math.min(1,dist)**2)),n=[dx,dy,nz];
+      const d=Math.max(0,n[0]*L[0]+n[1]*L[1]+n[2]*L[2]),sw=(1-dy)/2,bw=Math.max(0,dy)*(1-d);
+      const sp=Math.pow(Math.max(0,n[0]*Hh[0]+n[1]*Hh[1]+n[2]*Hh[2]),Lt.M.sh);
+      const sc=shadeLin(A,Lt,d,sw,bw,sp);
+      col=col.map((v,i)=>v*(1-a)+sc[i]*a);
+    }
+    const o=(py*c.width+px)*4;D[o]=gam(col[0]);D[o+1]=gam(col[1]);D[o+2]=gam(col[2]);D[o+3]=255;
+  }
+  x.putImageData(img,0,0);
+}
+function renderLight(){
+  const L=S.ls;
+  if(!L.objs.length)L.objs=[S.color];L.sel=clamp(L.sel,0,L.objs.length-1);
+  chipSet('#lsPresets',L.preset);chipSet('#lsMat',L.mat);
+  $('#lsK').value=L.K||6500;$('#lsKV').textContent=L.K?L.K+' K':'eigene Farbe';
+  $('#lsKI').value=L.keyI*100;$('#lsKIV').textContent=Math.round(L.keyI*100)+' %';
+  $('#lsAI').value=L.ambI*100;$('#lsAIV').textContent=Math.round(L.ambI*100)+' %';
+  $('#lsBI').value=L.bncI*100;$('#lsBIV').textContent=Math.round(L.bncI*100)+' %';
+  $('#lsKeySw').style.setProperty('--c',L.keyC);$('#lsAmbSw').style.setProperty('--c',L.ambC);$('#lsBncSw').style.setProperty('--c',L.bncC);
+  const ob=$('#lsObjs');ob.textContent='';
+  L.objs.forEach((c,i)=>{const b=document.createElement('button');b.className='obj';b.setAttribute('aria-pressed',String(i===L.sel));b.style.setProperty('--c',c);
+    b.innerHTML='<i></i><span></span>'+(L.objs.length>1?'<b title="Objekt entfernen">×</b>':'');b.querySelector('span').textContent=c.toUpperCase();
+    b.onclick=e=>{if(e.target.tagName==='B'){L.objs.splice(i,1);L.sel=Math.max(0,L.sel-(i<=L.sel?1:0))}else L.sel=i;renderLight();save()};ob.append(b)});
+  const Lt=lights(),g=$('#lsMx');g.textContent='';g.style.gridTemplateColumns=`auto repeat(${ZONES.length},minmax(0,1fr))`;
+  g.append(document.createElement('span'));ZONES.forEach(([s,full])=>{const h=document.createElement('div');h.className='ch';h.title=full;h.innerHTML='<span></span>';h.firstChild.textContent=s;g.append(h)});
+  L.objs.forEach((o,i)=>{const l=document.createElement('span');l.className='rl';l.textContent='Objekt '+(i+1);g.append(l);zonesOf(o,Lt).forEach((c,k)=>g.append(cellBtn(c,ZONES[k][1])))});
+  drawSphere();
+}
+function lsRows(){const Lt=lights();return S.ls.objs.map((o,i)=>zonesOf(o,Lt).map((c,k)=>({c,n:`Objekt ${i+1} · ${ZONES[k][1]}`})))}
+Object.entries(LSP).forEach(([k,v])=>{const b=document.createElement('button');b.dataset.v=k;b.textContent=v.n;$('#lsPresets').append(b)});
+$('#lsPresets').addEventListener('click',e=>{const b=e.target.closest('button');if(b){applyPreset(b.dataset.v);renderLight();save()}});
+$('#lsMat').addEventListener('click',e=>{const b=e.target.closest('button');if(b){S.ls.mat=b.dataset.v;renderLight();save()}});
+$('#lsK').addEventListener('input',e=>{S.ls.K=+e.target.value;S.ls.keyC=kelvin(S.ls.K);S.ls.preset='';renderLight();save()});
+$('#lsKI').addEventListener('input',e=>{S.ls.keyI=e.target.value/100;S.ls.preset='';renderLight();save()});
+$('#lsAI').addEventListener('input',e=>{S.ls.ambI=e.target.value/100;S.ls.preset='';renderLight();save()});
+$('#lsBI').addEventListener('input',e=>{S.ls.bncI=e.target.value/100;S.ls.preset='';renderLight();save()});
+$('#lsKeySw').addEventListener('click',()=>{S.ls.keyC=S.color;S.ls.K=null;S.ls.preset='';renderLight();save();toast('Hauptlicht-Farbe übernommen')});
+$('#lsAmbSw').addEventListener('click',()=>{S.ls.ambC=S.color;S.ls.preset='';renderLight();save();toast('Umgebungslicht-Farbe übernommen')});
+$('#lsBncSw').addEventListener('click',()=>{S.ls.bncC=S.color;S.ls.preset='';renderLight();save();toast('Reflexlicht-Farbe übernommen')});
+$('#lsObjAdd').addEventListener('click',()=>{if(S.ls.objs.length>=10){toast('Maximal 10 Objekte');return}S.ls.objs.push(S.color);S.ls.sel=S.ls.objs.length-1;renderLight();save()});
+$('#lsNew').addEventListener('click',()=>pushRows(lsRows(),true,'Licht: '+(LSP[S.ls.preset]?LSP[S.ls.preset].n:'eigene Szene'),ZONES.length));
+$('#lsAdd').addEventListener('click',()=>pushRows(lsRows(),false,'',ZONES.length));
+
+/* ================= gamut mask ================= */
+let gmCache={key:'',cv:null},gmDrag=null;
+function gmColor(x,y){const a=(Math.atan2(x,-y)*180/Math.PI+360)%360;return hsv2hex(fromWheel(a),Math.min(1,Math.hypot(x,y)),S.gm.v)}
+function inPoly(x,y,pts){let ins=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){const [xi,yi]=pts[i],[xj,yj]=pts[j];if(((yi>y)!==(yj>y))&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)ins=!ins}return ins}
+function gmCentroid(){const p=S.gm.pts;return [p.reduce((a,q)=>a+q[0],0)/p.length,p.reduce((a,q)=>a+q[1],0)/p.length]}
+function gmSamples(){
+  const p=S.gm.pts,c=gmCentroid(),out=[];
+  p.forEach(q=>out.push(q));p.forEach((q,i)=>{const r=p[(i+1)%p.length];out.push([(q[0]+r[0])/2,(q[1]+r[1])/2])});
+  out.push(c);p.forEach(q=>out.push([(q[0]+c[0])/2,(q[1]+c[1])/2]));
+  return [...new Set(out.map(([x,y])=>gmColor(x,y)))];
+}
+function clampPt(q){const d=Math.hypot(q[0],q[1]);if(d>1){q[0]/=d;q[1]/=d}return q}
+function drawGamut(){
+  const c=$('#gamut'),pd=Math.min(devicePixelRatio||1,2),Sz=280,R=128;c.width=c.height=Sz*pd;
+  const key=S.wheel+'|'+S.gm.v+'|'+pd;
+  if(gmCache.key!==key){
+    const off=document.createElement('canvas');off.width=off.height=Sz*pd;const ox=off.getContext('2d'),img=ox.createImageData(off.width,off.height),D=img.data;
+    for(let py=0;py<off.height;py++)for(let px=0;px<off.width;px++){
+      const x=(px/pd-Sz/2)/R,y=(py/pd-Sz/2)/R,d=Math.hypot(x,y);if(d>1.01)continue;
+      const [r,g,b]=hex2rgb(gmColor(x,y)),o=(py*off.width+px)*4;D[o]=r;D[o+1]=g;D[o+2]=b;D[o+3]=255*clamp((1.01-d)*R,0,1);
+    }
+    ox.putImageData(img,0,0);gmCache={key,cv:off};
+  }
+  const x=c.getContext('2d');x.drawImage(gmCache.cv,0,0);x.setTransform(pd,0,0,pd,0,0);
+  const P2=S.gm.pts.map(([a,b])=>[Sz/2+a*R,Sz/2+b*R]);
+  x.beginPath();x.arc(Sz/2,Sz/2,R+1,0,Math.PI*2);P2.forEach((q,i)=>i?x.lineTo(...q):x.moveTo(...q));x.closePath();
+  x.fillStyle='rgba(18,17,24,.66)';x.fill('evenodd');
+  x.beginPath();P2.forEach((q,i)=>i?x.lineTo(...q):x.moveTo(...q));x.closePath();x.strokeStyle='#fff';x.lineWidth=2.5;x.stroke();x.strokeStyle='rgba(0,0,0,.5)';x.lineWidth=1;x.stroke();
+  S.gm.pts.forEach((q,i)=>{const [px,py]=P2[i];x.beginPath();x.arc(px,py,10,0,Math.PI*2);x.fillStyle=gmColor(q[0],q[1]);x.fill();x.lineWidth=3;x.strokeStyle='#fff';x.stroke();x.lineWidth=1;x.strokeStyle='rgba(0,0,0,.5)';x.stroke()});
+  const a=toWheel(S.hsv.h)*Math.PI/180,cx=Math.sin(a)*S.hsv.s,cy=-Math.cos(a)*S.hsv.s,mx=Sz/2+cx*R,my=Sz/2+cy*R;
+  x.beginPath();x.arc(mx,my,6,0,Math.PI*2);x.lineWidth=2.5;x.strokeStyle='#fff';x.stroke();x.beginPath();x.arc(mx,my,8.5,0,Math.PI*2);x.lineWidth=1.2;x.strokeStyle='#000';x.stroke();
+  const inside=inPoly(cx,cy,S.gm.pts);
+  $('#gmInfo').innerHTML=`Der Ring zeigt deine aktuelle Farbe – sie liegt <b>${inside?'innerhalb':'außerhalb'}</b> der Maske.`+(inside?'':' Für ein stimmiges Bild lieber eine Farbe aus der Maske nehmen.');
+}
+function renderGamut(){
+  chipSet('#gmShape',S.gm.pts.length);$('#gmV').value=S.gm.v*100;$('#gmVV').textContent=Math.round(S.gm.v*100)+' %';$('#gmRamps').checked=!!S.gm.ramps;
+  drawGamut();
+  const box=$('#gmSw');box.textContent='';gmSamples().forEach((c,i)=>{const b=document.createElement('button');b.className='sw';b.style.setProperty('--c',c);b.title=c.toUpperCase();b.onclick=()=>{S.old=S.color;setColor(c,'keepbase')};box.append(b)});
+}
+function gmRows(){
+  const cs=gmSamples(),names=STEPNAMES[S.steps];
+  if(S.gm.ramps)return cs.map((c,i)=>rampOf(c).map((r,k)=>({c:r,n:`Maske ${i+1} · ${names[k]}`})));
+  return [cs.map((c,i)=>({c,n:'Maske '+(i+1)}))];
+}
+(()=>{
+  const c=$('#gamut'),Sz=280,R=128,pos=e=>{const r=c.getBoundingClientRect();return [((e.clientX-r.left)/r.width*Sz-Sz/2)/R,((e.clientY-r.top)/r.height*Sz-Sz/2)/R]};
+  c.addEventListener('pointerdown',e=>{
+    const [x,y]=pos(e);let best=-1,bd=1e9;S.gm.pts.forEach((q,i)=>{const d=Math.hypot(q[0]-x,q[1]-y);if(d<bd){bd=d;best=i}});
+    if(bd<.16)gmDrag={i:best};else if(inPoly(x,y,S.gm.pts))gmDrag={all:true,x,y,orig:S.gm.pts.map(q=>q.slice())};else return;
+    e.preventDefault();c.setPointerCapture(e.pointerId);c.style.cursor='grabbing';
+  });
+  c.addEventListener('pointermove',e=>{
+    if(!gmDrag)return;const [x,y]=pos(e);
+    if(gmDrag.all){S.gm.pts=gmDrag.orig.map(q=>clampPt([q[0]+x-gmDrag.x,q[1]+y-gmDrag.y]))}
+    else S.gm.pts[gmDrag.i]=clampPt([x,y]);
+    renderGamut();
+  });
+  const end=()=>{if(gmDrag){gmDrag=null;c.style.cursor='';save()}};
+  c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
+})();
+$('#gmShape').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const n=+b.dataset.v,[cx,cy]=gmCentroid(),r=.5;
+  S.gm.pts=Array.from({length:n},(_,i)=>{const a=i/n*Math.PI*2;return clampPt([cx*.4+Math.sin(a)*r,cy*.4-Math.cos(a)*r])});renderGamut();save();
+});
+function gmTransform(f){S.gm.pts=S.gm.pts.map(q=>clampPt(f(q)));renderGamut();save()}
+const rot=a=>q=>[q[0]*Math.cos(a)-q[1]*Math.sin(a),q[0]*Math.sin(a)+q[1]*Math.cos(a)];
+$('#gmRotL').addEventListener('click',()=>gmTransform(rot(-Math.PI/12)));
+$('#gmRotR').addEventListener('click',()=>gmTransform(rot(Math.PI/12)));
+const scl=k=>q=>{const [cx,cy]=gmCentroid();return [cx+(q[0]-cx)*k,cy+(q[1]-cy)*k]};
+$('#gmSmall').addEventListener('click',()=>gmTransform(scl(.85)));
+$('#gmBig').addEventListener('click',()=>gmTransform(scl(1.15)));
+$('#gmV').addEventListener('input',e=>{S.gm.v=e.target.value/100;renderGamut();save()});
+$('#gmRamps').addEventListener('change',e=>{S.gm.ramps=e.target.checked;save()});
+$('#gmNew').addEventListener('click',()=>{const rows=gmRows();pushRows(rows,true,'Gamut-Maske',S.gm.ramps?S.steps:Math.min(8,rows[0].length))});
+$('#gmAdd').addEventListener('click',()=>pushRows(gmRows(),false,'',5));
+
+/* ================= reference image ================= */
+const REF={img:null,name:'',res:[],work:null};
+function toLab(r,g,b){
+  const R=lin1(r),G=lin1(g),B=lin1(b);
+  const X=(R*.4124+G*.3576+B*.1805)/.95047,Y=R*.2126+G*.7152+B*.0722,Z=(R*.0193+G*.1192+B*.9505)/1.08883;
+  const f=t=>t>.008856?Math.cbrt(t):7.787*t+16/116;
+  return [116*f(Y)-16,500*(f(X)-f(Y)),200*(f(Y)-f(Z))];
+}
+function kmeans(px,k){
+  const n=px.length/3,lab=new Float32Array(n*3);
+  for(let i=0;i<n;i++){const l=toLab(px[i*3],px[i*3+1],px[i*3+2]);lab[i*3]=l[0];lab[i*3+1]=l[1];lab[i*3+2]=l[2]}
+  let seed=12345;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff};
+  const C=[],d2=new Float32Array(n).fill(1e9);
+  let first=Math.floor(rnd()*n);C.push([lab[first*3],lab[first*3+1],lab[first*3+2]]);
+  while(C.length<Math.min(k,n)){
+    const c=C[C.length-1];let sum=0;
+    for(let i=0;i<n;i++){const d=(lab[i*3]-c[0])**2+(lab[i*3+1]-c[1])**2+(lab[i*3+2]-c[2])**2;if(d<d2[i])d2[i]=d;sum+=d2[i]}
+    let t=rnd()*sum,j=0;for(;j<n-1;j++){t-=d2[j];if(t<=0)break}
+    C.push([lab[j*3],lab[j*3+1],lab[j*3+2]]);
+  }
+  const asg=new Int32Array(n);
+  for(let it=0;it<14;it++){
+    const acc=C.map(()=>[0,0,0,0]);
+    for(let i=0;i<n;i++){let b=0,bd=1e18;for(let q=0;q<C.length;q++){const c=C[q],d=(lab[i*3]-c[0])**2+(lab[i*3+1]-c[1])**2+(lab[i*3+2]-c[2])**2;if(d<bd){bd=d;b=q}}asg[i]=b;const a=acc[b];a[0]+=lab[i*3];a[1]+=lab[i*3+1];a[2]+=lab[i*3+2];a[3]++}
+    C.forEach((c,q)=>{const a=acc[q];if(a[3]){c[0]=a[0]/a[3];c[1]=a[1]/a[3];c[2]=a[2]/a[3]}});
+  }
+  const sums=C.map(()=>[0,0,0,0]);
+  for(let i=0;i<n;i++){const s=sums[asg[i]];s[0]+=px[i*3];s[1]+=px[i*3+1];s[2]+=px[i*3+2];s[3]++}
+  return sums.filter(s=>s[3]).map(s=>({c:rgb2hex(s[0]/s[3],s[1]/s[3],s[2]/s[3]),p:s[3]/n})).sort((a,b)=>b.p-a.p);
+}
+function analyzeRef(){
+  if(!REF.img)return;
+  const w=REF.work,px=[];const d=w.getContext('2d').getImageData(0,0,w.width,w.height).data;
+  for(let i=0;i<d.length;i+=4)if(d[i+3]>200)px.push(d[i],d[i+1],d[i+2]);
+  REF.res=kmeans(px,S.ref.k);
+  let dark=0,mid=0,light=0;for(let i=0;i<px.length;i+=3){const L=lstar(rgb2hex(px[i],px[i+1],px[i+2]));if(L<35)dark++;else if(L<70)mid++;else light++}
+  const t=px.length/3||1;
+  $('#refInfo').textContent=`${REF.name} · ${REF.img.width}×${REF.img.height} px · Helligkeit: ${Math.round(dark/t*100)} % dunkel, ${Math.round(mid/t*100)} % mittel, ${Math.round(light/t*100)} % hell`;
+}
+function drawRef(){
+  const c=$('#refC');if(!REF.img){c.hidden=true;return}
+  c.hidden=false;const sc=Math.min(1,700/REF.img.width);c.width=Math.round(REF.img.width*sc);c.height=Math.round(REF.img.height*sc);
+  const x=c.getContext('2d');x.drawImage(REF.img,0,0,c.width,c.height);
+  if(S.ref.view!=='color'){
+    const im=x.getImageData(0,0,c.width,c.height),D=im.data,n=S.ref.view==='n3'?3:S.ref.view==='n5'?5:0;
+    for(let i=0;i<D.length;i+=4){
+      let L=lstar(rgb2hex(D[i],D[i+1],D[i+2]));
+      if(n){const b=Math.min(n-1,Math.floor(L/100*n));L=n===1?50:12+b*(80/(n-1))}
+      const Y=L>8?Math.pow((L+16)/116,3):L/903.3,g=gam(Y);D[i]=D[i+1]=D[i+2]=g;
+    }
+    x.putImageData(im,0,0);
+  }
+}
+function renderRef(){
+  chipSet('#refView',S.ref.view);$('#refK').value=S.ref.k;$('#refKV').textContent=S.ref.k;$('#refSortL').checked=!!S.ref.sortL;
+  $('#refNew').disabled=$('#refAdd').disabled=!REF.res.length;
+  drawRef();
+  const box=$('#refSw');box.textContent='';
+  refList().forEach(r=>{const b=document.createElement('button');b.className='rr';b.style.setProperty('--c',r.c);b.title='Als aktuelle Farbe übernehmen';
+    b.innerHTML='<i></i><div class="bar"><span></span></div><small></small>';b.querySelector('.bar span').style.width=Math.max(2,r.p*100)+'%';
+    b.querySelector('small').textContent=r.c.toUpperCase()+' · '+(r.p*100).toFixed(1).replace('.',',')+' %';b.onclick=()=>{S.old=S.color;setColor(r.c)};box.append(b)});
+}
+function refList(){return S.ref.sortL?REF.res.slice().sort((a,b)=>lstar(a.c)-lstar(b.c)):REF.res}
+$('#refLoad').addEventListener('click',()=>$('#refIn').click());
+$('#refIn').addEventListener('change',e=>{
+  const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+  const url=URL.createObjectURL(f),img=new Image();
+  img.onload=()=>{
+    REF.img=img;REF.name=f.name;const sc=Math.min(1,160/Math.max(img.width,img.height)),w=document.createElement('canvas');
+    w.width=Math.max(1,Math.round(img.width*sc));w.height=Math.max(1,Math.round(img.height*sc));w.getContext('2d').drawImage(img,0,0,w.width,w.height);REF.work=w;
+    analyzeRef();renderRef();
+  };
+  img.onerror=()=>toast('Dieses Bild kann ich nicht öffnen');img.src=url;
+});
+$('#refView').addEventListener('click',e=>{const b=e.target.closest('button');if(b){S.ref.view=b.dataset.v;renderRef();save()}});
+$('#refK').addEventListener('change',e=>{S.ref.k=+e.target.value;analyzeRef();renderRef();save()});
+$('#refK').addEventListener('input',e=>{$('#refKV').textContent=e.target.value});
+$('#refSortL').addEventListener('change',e=>{S.ref.sortL=e.target.checked;renderRef();save()});
+const refRows=()=>{const l=refList();return [l.map((r,i)=>({c:r.c,n:`Referenz ${i+1} · ${Math.round(r.p*100)} %`}))]};
+$('#refNew').addEventListener('click',()=>pushRows(refRows(),true,'Referenz '+REF.name.replace(/\.[a-z0-9]+$/i,''),Math.min(8,REF.res.length)));
+$('#refAdd').addEventListener('click',()=>pushRows(refRows(),false,'',8));
+
+/* ================= tools: aerial perspective, value plan, simultaneous contrast ================= */
+const HAZE=[['Tageshimmel','#b9d3f0'],['Dunst','#d9dadc'],['Abendrot','#e8b49a'],['Nebel','#c9ccd1'],['Nacht','#2a3350']];
+HAZE.forEach(([n,c])=>{const b=document.createElement('button');b.dataset.v=c;b.textContent=n;$('#hzPre').append(b)});
+function hazeRow(){
+  const A=linOf(S.color),Hz=linOf(S.tl.haze);
+  return [0,1,2,3,4,5].map(i=>{const t=1-Math.exp(-S.tl.hazeA*3*i/5);return hexOfLin(A.map((v,k)=>v+(Hz[k]-v)*t))});
+}
+const HZN=['nah','','','mittel','','fern'];
+const NPN={3:['Dunkel','Mittel','Hell'],4:['Dunkel','Mitteldunkel','Mittelhell','Hell'],5:['Sehr dunkel','Dunkel','Mittel','Hell','Sehr hell']};
+function renderTools(){
+  chipSet('#hzPre',S.tl.haze);$('#hzSw').style.setProperty('--c',S.tl.haze);$('#hzA').value=S.tl.hazeA*100;$('#hzAV').textContent=Math.round(S.tl.hazeA*100)+' %';
+  const hr=$('#hzRow');hr.textContent='';
+  hazeRow().forEach((c,i)=>{const w=document.createElement('div');w.style.cssText='flex:1;display:grid;gap:3px';w.append(cellBtn(c,'Luftperspektive '+(i+1)));const l=document.createElement('span');l.className='lab';l.textContent=HZN[i];w.append(l);hr.append(w)});
+  // value plan
+  chipSet('#npN',S.tl.np);
+  const out=$('#npOut');out.textContent='';const sw=P()?P().sw:[];
+  if(!sw.length){out.innerHTML='<p class="note">Die aktive Palette ist leer.</p>'}
+  else{
+    const n=S.tl.np,names=NPN[n],bands=names.map(()=>[]);
+    sw.forEach(s=>{const L=lstar(s.c);bands[Math.min(n-1,Math.floor(L/100*n))].push({...s,L})});
+    for(let b=n-1;b>=0;b--){
+      const row=document.createElement('div');row.className='npb';
+      row.innerHTML=`<div class="k">${names[b]}<span>Helligkeit ${Math.round(b*100/n)}–${Math.round((b+1)*100/n)}</span></div><div class="v"></div>`;
+      bands[b].sort((x,y)=>x.L-y.L).forEach(s=>{const i=document.createElement('i');i.style.setProperty('--c',s.c);i.title=(s.n?s.n+' · ':'')+s.c.toUpperCase()+' · '+Math.round(s.L);row.querySelector('.v').append(i)});
+      if(!bands[b].length)row.querySelector('.v').innerHTML='<span class="note">– keine Farbe –</span>';
+      out.append(row);
+    }
+    const msgs=[],empty=names.filter((_,i)=>!bands[i].length);
+    if(empty.length)msgs.push('Keine Farben in: '+empty.join(', ')+'. Für mehr Tiefe fehlt dir dort ein Wert.');
+    const sorted=sw.map(s=>({c:s.c,L:lstar(s.c),h:hex2hsv(s.c).h})).sort((a,b)=>a.L-b.L);const close=[];
+    for(let i=1;i<sorted.length;i++){const a=sorted[i-1],b=sorted[i],dh=Math.abs(((a.h-b.h+540)%360)-180);if(b.L-a.L<3&&dh>25&&a.c!==b.c)close.push(a.c.toUpperCase()+' / '+b.c.toUpperCase())}
+    if(close.length)msgs.push('Fast gleich hell, aber verschiedene Farbe (verschwimmen nebeneinander): '+close.slice(0,4).join(', ')+(close.length>4?' …':''));
+    const p=document.createElement('p');p.className=msgs.length?'warn':'ok';p.textContent=msgs.length?msgs.join(' '):'Gut verteilt: Jede Helligkeitsgruppe ist besetzt.';out.append(p);
+  }
+  // simultaneous contrast
+  const b=S.hsv,comp=hsv2hex(fromWheel(toWheel(b.h)+180),Math.max(b.s,.55),.75),sim=hsv2hex(b.h,Math.min(1,b.s+.3),Math.max(.2,b.v*.85));
+  const bgs=[['Weiß','#ffffff'],['Schwarz','#16151a'],['Mittelgrau','#7f7f7f'],['Gegenfarbe',comp],['Ähnliche Farbe',sim],...(sw.slice(0,3).map((s,i)=>['Palette '+(i+1),s.c]))];
+  const sc=$('#scOut');sc.textContent='';
+  bgs.forEach(([n,c])=>{const d=document.createElement('div');d.style.setProperty('--bgc',c);d.style.setProperty('--c',S.color);d.style.setProperty('--tc',lstar(c)>58?'#1d1b22':'#ffffff');d.innerHTML='<i></i><span></span>';d.querySelector('span').textContent=n;sc.append(d)});
+}
+$('#hzPre').addEventListener('click',e=>{const b=e.target.closest('button');if(b){S.tl.haze=b.dataset.v;renderTools();save()}});
+$('#hzSw').addEventListener('click',()=>{S.tl.haze=S.color;renderTools();save();toast('Dunstfarbe übernommen')});
+$('#hzA').addEventListener('input',e=>{S.tl.hazeA=e.target.value/100;renderTools();save()});
+$('#hzAdd').addEventListener('click',()=>pushRows([hazeRow().map((c,i)=>({c,n:'Luft · '+(['nah','2','3','mittel','5','fern'][i])}))],false,'',6));
+$('#npN').addEventListener('click',e=>{const b=e.target.closest('button');if(b){S.tl.np=+b.dataset.v;renderTools();save()}});
+
+/* ================= tabs ================= */
+const TABS={harm:['#tabH','#paneH'],skin:['#tabS','#paneS'],light:['#tabL','#paneL'],gamut:['#tabG','#paneG'],ref:['#tabR','#paneR'],tools:['#tabT','#paneT']};
+function renderTab(){if(S.tab==='light')renderLight();else if(S.tab==='gamut')renderGamut();else if(S.tab==='ref')renderRef();else if(S.tab==='tools')renderTools()}
+function setTab(t){if(!TABS[t])t='harm';S.tab=t;for(const [k,[b,p]] of Object.entries(TABS)){$(b).setAttribute('aria-selected',String(k===t));$(p).hidden=k!==t}renderTab();save()}
+Object.entries(TABS).forEach(([k,[b]])=>$(b).addEventListener('click',()=>setTab(k)));
+
 
 /* ================= palettes ================= */
 function P(){return S.pal[S.pi]}
@@ -475,6 +956,7 @@ function renderPalette(){
   $('#swRep').disabled=S.sel<0;$('#swL').disabled=S.sel<=0;$('#swR').disabled=S.sel<0||S.sel>=p.sw.length-1;$('#swNameRow').hidden=S.sel<0;if(S.sel>=0&&document.activeElement!==$('#swName'))$('#swName').value=p.sw[S.sel].n;
   $('#grayTog').checked=S.gray;$('#pngNames').checked=S.pngNames;$('#pngHex').checked=S.pngHex;
   sizePal();
+  if(S.tab==='tools'&&typeof renderTools==='function')renderTools();
 }
 // square swatches: row height = measured column width
 function sizePal(){const g=$('#palGrid'),cs=getComputedStyle(g),n=P().cols,w=g.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);g.style.gridAutoRows=Math.max(14,Math.floor((w-6*(n-1))/n))+'px'}
@@ -635,6 +1117,7 @@ $('#acoIn').addEventListener('change',async e=>{
 load();
 if(!S.pal.length)S.pal=[{name:'Meine Palette',cols:5,sw:[]}];
 S.hsv=hex2hsv(S.color,22);
+if(S.ls.K)S.ls.keyC=kelvin(S.ls.K);
 setTab(S.tab);renderPicker();renderHarmony();renderSkin();renderPalette();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 window.__farbhelfer={acoBytes,parseAco,grdBytes,gradientsOf,chartPng,S};
