@@ -1,0 +1,18 @@
+# Lokales Paket. Bauen:  cd ~/Documents/Farbhelfer/linux && makepkg -f
+pkgname=farbhelfer
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Farbhelfer – Farbharmonien, Schattierung und Paletten für Clip Studio Paint"
+arch=('any')
+license=('MIT')
+depends=('electron43')
+source=()
+
+package() {
+  local app="$startdir/../app"
+  install -d "$pkgdir/usr/lib/farbhelfer"
+  install -m644 "$app"/{main.js,preload.js,package.json,index.html,icon-512.png} "$pkgdir/usr/lib/farbhelfer/"
+  install -Dm755 "$startdir/farbhelfer.sh" "$pkgdir/usr/bin/farbhelfer"
+  install -Dm644 "$startdir/farbhelfer.desktop" "$pkgdir/usr/share/applications/farbhelfer.desktop"
+  for n in 128 256 512; do install -Dm644 "$startdir/icon-$n.png" "$pkgdir/usr/share/icons/hicolor/${n}x${n}/apps/farbhelfer.png"; done
+}

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Farbhelfer
+GenericName=Farbharmonien & Paletten
+Comment=Farbharmonien, Schattierung und Paletten für Clip Studio Paint
+Exec=farbhelfer
+Icon=farbhelfer
+Terminal=false
+Categories=Graphics;
+Keywords=farbe;palette;harmonie;clip studio;color;
+StartupWMClass=Farbhelfer
